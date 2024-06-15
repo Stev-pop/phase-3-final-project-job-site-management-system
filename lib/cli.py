@@ -1,6 +1,6 @@
 from models.employee import Employee
 from models.job import Job
-from models.employee_job import Employee_Job
+from lib.models.employer import Employee_Job
 
 from helpers import (
     exit_program,

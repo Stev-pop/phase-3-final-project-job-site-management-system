@@ -9,6 +9,17 @@ class Employee:
 
     def __repr__(self):
         return f"<Employee {self.employee_id}: {self.name}>"
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, value):
+        if isinstance(value, str) and len(value) > 0:
+            self._name = value
+        else:
+            ValueError ("Name must be a string with atleast 1 character")
 
     @classmethod
     def create_table(cls):
@@ -95,14 +106,13 @@ class Employee:
 
     def get_jobs(self):
         sql = """
-            SELECT jobs.job_id, jobs.title, jobs.description, employers.name as employer_name
+            SELECT jobs.job_id, jobs.title, jobs.description
             FROM jobs
-            JOIN employers ON jobs.employer_id = employers.employer_id
             JOIN employee_jobs ON jobs.job_id = employee_jobs.job_id
             WHERE employee_jobs.employee_id = ?
         """
         rows = CURSOR.execute(sql, (self.employee_id,)).fetchall()
-        return [(row[0], row[1], row[2], row[3]) for row in rows]
+        return [(row[0], row[1], row[2]) for row in rows]
 
     def assign_to_job(self, job_id):
         sql = """

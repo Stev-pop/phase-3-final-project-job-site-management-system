@@ -1,4 +1,5 @@
 from models.initializer import CURSOR, CONN
+from models.employee import Employee
 
 class Job:
     all = {}
@@ -11,6 +12,39 @@ class Job:
 
     def __repr__(self):
         return f"<Job {self.job_id}: {self.title}>"
+    
+    @property
+    def title(self):
+        return self._title
+    
+    @title.setter
+    def title(self, value):
+        if isinstance(value, str) and len(value) > 5:
+            self._title = value
+        else:
+            raise ValueError("Title must be a string with at least 5 characters")
+
+    @property
+    def description(self):
+        return self._description
+    
+    @description.setter
+    def description(self, value):
+        if isinstance(value, str) and len(value) > 50:
+            self._description = value
+        else:
+            raise ValueError("Description should be a string with more than 50 characters")   
+
+    @property
+    def employer_id(self):
+        return self._employer_id
+    
+    @employer_id.setter
+    def employer_id(self, value):
+        if isinstance(value, int):
+            self._employer_id = value
+        else:
+            raise ValueError("Employer ID must be an integer")
 
     @classmethod
     def create_table(cls):
@@ -44,11 +78,11 @@ class Job:
         self.job_id = CURSOR.lastrowid
         type(self).all[self.job_id] = self
 
-    def update_job(self):
+    def update(self):
         sql = """
             UPDATE jobs
             SET title = ?, description = ?
-            WHERE job_id = ? 
+            WHERE job_id = ?
         """
         CURSOR.execute(sql, (self.title, self.description, self.job_id))
         CONN.commit()
@@ -62,6 +96,12 @@ class Job:
         CONN.commit()
         del type(self).all[self.job_id]
         self.job_id = None
+
+    @classmethod
+    def create(cls, title, description, employer_id=None):
+        job = cls(title, description, employer_id)
+        job.save()
+        return job
 
     @classmethod
     def instance_from_db(cls, row):
@@ -89,12 +129,6 @@ class Job:
         return cls.instance_from_db(row) if row else None
 
     @classmethod
-    def find_by_first_word(cls, word):
-        sql = "SELECT * FROM jobs WHERE title LIKE ?"
-        rows = CURSOR.execute(sql, (f"{word}%",)).fetchall()
-        return [cls.instance_from_db(row) for row in rows]
-
-    @classmethod
     def find_by_employer(cls, employer_id):
         sql = "SELECT * FROM jobs WHERE employer_id = ?"
         rows = CURSOR.execute(sql, (employer_id,)).fetchall()
@@ -109,5 +143,6 @@ class Job:
             JOIN jobs ON employee_jobs.job_id = jobs.job_id
             WHERE jobs.job_id = ?
         """
-        rows = CURSOR.execute(sql, (job_id,)).fetchall()
+        rows = CURSOR.execute(sql, (job_id)).fetchall()
         return [(row[0], row[1], row[2]) for row in rows]
+
