@@ -31,11 +31,17 @@ def update_job():
     if job:
         title = input("Enter the new title (leave empty to keep current): ")
         description = input("Enter the new description (leave empty to keep current): ")
+        employer_id = input("Enter the new empoyer_id (leave empty to keep current): ")
+        employee_id = input("Enter the new empoyee_id (leave empty to keep current): ")
 
         if title:
             job.title = title
         if description:
             job.description = description
+        if employer_id:
+            job.employee_id = employer_id
+        if employee_id:
+            job.employee_id = employee_id
         job.update_job()
         print(f'Job {job_id} updated successfully')
     else:
