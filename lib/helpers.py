@@ -2,6 +2,10 @@ from models.job import Job
 from models.employee import Employee
 from models.employee_job import Employee_Job
 
+def exit_program():
+    print("Goodbye!")
+    exit()
+
 def list_jobs():
     jobs = Job.get_all()
     for job in jobs:
