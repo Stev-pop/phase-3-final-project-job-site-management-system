@@ -1,6 +1,6 @@
 from models.initializer import CURSOR, CONN
 
-class Employer_Job:
+class Employer_job:
     all = {}
 
     def __init__(self, employer_id, job_id):
@@ -39,6 +39,14 @@ class Employer_Job:
         CURSOR.execute(sql, (self.employer_id, self.job_id))
         CONN.commit()
         type(self).all[(self.employer_id, self.job_id)] = self
+
+    @classmethod
+    def create(cls, employer_id, job_id):
+        """Create a new employer_job entry."""
+        employer_job = cls(employer_id, job_id)
+        employer_job.save()
+        return employer_job
+    
 
     @classmethod
     def find_jobs_by_employer(cls, employer_id):

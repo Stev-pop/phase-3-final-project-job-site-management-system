@@ -3,11 +3,12 @@ from models.initializer import CURSOR, CONN
 class Job:
     all = {}
 
-    def __init__(self, title, description, employer_id=None):
+    def __init__(self, title, description, employer_id=None, employee_id=None):
         self.job_id = None
         self.title = title
         self.description = description
         self.employer_id = employer_id
+        self.employee_id = employee_id
 
     def __repr__(self):
         return f"<Job {self.job_id}: {self.title}>"
@@ -20,7 +21,9 @@ class Job:
                 title TEXT,
                 description TEXT,
                 employer_id INTEGER,
-                FOREIGN KEY(employer_id) REFERENCES employers(employer_id)
+                employee_id INTEGER,
+                FOREIGN KEY(employer_id) REFERENCES employers(employer_id),
+                FOREIGN KEY(employee_id) REFERENCES employees(employee_id)
             )
         """
         CURSOR.execute(sql)
@@ -36,10 +39,10 @@ class Job:
 
     def save(self):
         sql = """
-            INSERT INTO jobs (title, description, employer_id)
-            VALUES (?, ?, ?)
+            INSERT INTO jobs (title, description, employer_id, employee_id)
+            VALUES (?, ?, ?, ?)
         """
-        CURSOR.execute(sql, (self.title, self.description, self.employer_id))
+        CURSOR.execute(sql, (self.title, self.description, self.employer_id, self.employee_id))
         CONN.commit()
         self.job_id = CURSOR.lastrowid
         type(self).all[self.job_id] = self
@@ -47,10 +50,10 @@ class Job:
     def update_job(self):
         sql = """
             UPDATE jobs
-            SET title = ?, description = ?
+            SET title = ?, description = ?, employer_id = ?, employee_id = ?
             WHERE job_id = ? 
         """
-        CURSOR.execute(sql, (self.title, self.description, self.job_id))
+        CURSOR.execute(sql, (self.title, self.description, self.employer_id, self.employee_id, self.job_id))
         CONN.commit()
 
     def delete(self):
@@ -70,8 +73,9 @@ class Job:
             job.title = row[1]
             job.description = row[2]
             job.employer_id = row[3]
+            job.employee_id = row[4]
         else:
-            job = cls(row[1], row[2], row[3])
+            job = cls(row[1], row[2], row[3], row[4])
             job.job_id = row[0]
             cls.all[job.job_id] = job
         return job
@@ -101,11 +105,17 @@ class Job:
         return [cls.instance_from_db(row) for row in rows]
 
     @classmethod
+    def find_by_employee(cls, employee_id):
+        sql = "SELECT * FROM jobs WHERE employee_id = ?"
+        rows = CURSOR.execute(sql, (employee_id,)).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
+
+    @classmethod
     def find_employee_job_info(cls, job_id):
         sql = """
             SELECT employees.name, jobs.title, jobs.description
             FROM employees
-            JOIN jobs ON employees.employer_id = jobs.employer_id
+            JOIN jobs ON employees.employee_id = jobs.employee_id
             WHERE jobs.job_id = ?
         """
         rows = CURSOR.execute(sql, (job_id,)).fetchall()

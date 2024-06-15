@@ -1,6 +1,6 @@
 from models.job import Job
 from models.employer import Employer
-
+from models.employee import Employee
 
 def exit_program():
     print("Goodbye!")
@@ -20,7 +20,8 @@ def create_job():
     title = input("Enter the job's title: ")
     description = input("Enter the job's description: ")
     employer_id = input("Enter the employer's ID: ")
-    job = Job(title, description, employer_id)
+    employee_id = input("Enter the employee ID: ")
+    job = Job(title, description, employer_id, employee_id)
     job.save()
     print(f'Job {job.job_id} created successfully')
 
@@ -61,15 +62,11 @@ def list_employers():
         print(employer)
 
 def find_employer_by_id():
-    """Find an employer by his/her ID."""
-
     employer_id = input("Enter the employer's ID: ")
     employer = Employer.find_by_id(employer_id)
     print(employer) if employer else print(f'Employer {employer_id} not found')
 
 def create_employer():
-    """Create a new employer."""
-
     name = input("Enter the employer's name: ")
     company_name = input("Enter the employer's company name: ")
     employer = Employer(name, company_name)
@@ -77,8 +74,6 @@ def create_employer():
     print(f'Employer {employer.employer_id} created successfully')
 
 def update_employer():
-    """Update an employer."""
-
     employer_id = input("Enter the employer's ID to update: ")
     employer = Employer.find_by_id(employer_id)
     if employer:
@@ -94,8 +89,6 @@ def update_employer():
         print(f'Employer {employer_id} not found')
 
 def delete_employer():
-    """Delete an employer."""
-
     employer_id = input("Enter the employer's ID to delete: ")
     employer = Employer.find_by_id(employer_id)
     if employer:
@@ -104,11 +97,49 @@ def delete_employer():
     else:
         print(f'Employer {employer_id} not found')
 
-
 def find_jobs_with_employer_names_input():
-    """Find all jobs with the associated employer name based on user input."""
-
     employer_id = input("Enter the employer's ID to find associated jobs: ")
     jobs = Employer.find_jobs_with_employer_names(employer_id)
     for job in jobs:
         print(job)
+
+def list_employees():
+    employees = Employee.get_all()
+    for employee in employees:
+        print(employee)
+
+def find_employee_by_id():
+    employee_id = input("Enter the employee's ID: ")
+    employee = Employee.find_by_id(employee_id)
+    print(employee) if employee else print(f'Employee {employee_id} not found')
+
+def create_employee():
+    name = input("Enter the employee's name: ")
+    position = input("Enter the employee's position: ")
+    employee = Employee(name, position)
+    employee.save()
+    print(f'Employee {employee.employee_id} created successfully')
+
+def update_employee():
+    employee_id = input("Enter the employee's ID to update: ")
+    employee = Employee.find_by_id(employee_id)
+    if employee:
+        name = input("Enter the new name (leave empty to keep current): ")
+        position = input("Enter the new position (leave empty to keep current): ")
+        if name:
+            employee.name = name
+        if position:
+            employee.position = position
+        employee.update_employee()
+        print(f'Employee {employee_id} updated successfully')
+    else:
+        print(f'Employee {employee_id} not found')
+
+def delete_employee():
+    employee_id = input("Enter the employee's ID to delete: ")
+    employee = Employee.find_by_id(employee_id)
+    if employee:
+        employee.delete()
+        print(f'Employee {employee_id} deleted successfully')
+    else:
+        print(f'Employee {employee_id} not found')
