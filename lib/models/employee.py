@@ -87,6 +87,12 @@ class Employee:
         row = CURSOR.execute(sql, (employee_id,)).fetchone()
         return cls.instance_from_db(row) if row else None
 
+    @classmethod
+    def find_by_name(cls, name):
+        sql = "SELECT * FROM employees WHERE name = ?"
+        row = CURSOR.execute(sql, (name,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+
     def get_jobs(self):
         sql = """
             SELECT jobs.job_id, jobs.title, jobs.description, employers.name as employer_name
@@ -114,16 +120,11 @@ class Employee:
         CURSOR.execute(sql, (self.employee_id, job_id))
         CONN.commit()
 
-    @classmethod
-    def find_by_name(cls, name):
-        sql = "SELECT * FROM employees WHERE name = ?"
-        row = CURSOR.execute(sql, (name,)).fetchone()
-        return cls.instance_from_db(row) if row else None
-    
-    def assign_to_job(self, job_id):
+    def get_job_count(self):
         sql = """
-            INSERT INTO employee_jobs (employee_id, job_id)
-            VALUES (?, ?)
+            SELECT COUNT(*)
+            FROM employee_jobs
+            WHERE employee_id = ?
         """
-        CURSOR.execute(sql, (self.employee_id, job_id))
-        CONN.commit()
+        count = CURSOR.execute(sql, (self.employee_id,)).fetchone()[0]
+        return count
