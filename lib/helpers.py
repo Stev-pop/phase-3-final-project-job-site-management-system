@@ -1,6 +1,7 @@
 from models.job import Job
 from models.employer import Employer
 
+
 def exit_program():
     print("Goodbye!")
     exit()
