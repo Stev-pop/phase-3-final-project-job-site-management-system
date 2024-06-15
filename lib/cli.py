@@ -1,6 +1,5 @@
-from models.employee import Employee
+from models.employer import Employer
 from models.job import Job
-from lib.models.employer import Employee_Job
 
 from helpers import (
     exit_program,
@@ -10,16 +9,17 @@ from helpers import (
     update_job,
     delete_job,
     list_jobs_by_employer,
-    list_employees_for_job,
-    list_jobs_for_employee,
-    assign_employee_to_job,
-    unassign_employee_from_job
+    list_employers,
+    find_employer_by_id,
+    create_employer,
+    update_employer,
+    delete_employer,
+    find_jobs_with_employer_names_input
 )
 
 def main():
-    Employee.create_table()
+    Employer.create_table()
     Job.create_table()
-    Employee_Job.create_table()
 
     while True:
         print("\nJob Site Management System")
@@ -29,10 +29,12 @@ def main():
         print("4. Update Job Post")
         print("5. Delete Job")
         print("6. List Jobs by Employer")
-        print("7. List Employees for Job")
-        print("8. List Jobs for Employee")
-        print("9. Assign Employee to Job")
-        print("10. Unassign Employee from Job")
+        print("7. List Employers")
+        print("8. Find Employer by ID")
+        print("9. Create Employer")
+        print("10. Update Employer")
+        print("11. Delete Employer")
+        print("12. Find Jobs with Employer Names")
         print("0. Exit")
 
         choice = input("Enter your choice: ")
@@ -50,13 +52,17 @@ def main():
         elif choice == '6':
             list_jobs_by_employer()
         elif choice == '7':
-            list_employees_for_job()
+            list_employers()
         elif choice == '8':
-            list_jobs_for_employee()
+            find_employer_by_id()
         elif choice == '9':
-            assign_employee_to_job()
+            create_employer()
         elif choice == '10':
-            unassign_employee_from_job()
+            update_employer()
+        elif choice == '11':
+            delete_employer()
+        elif choice == '12':
+            find_jobs_with_employer_names_input()
         elif choice == '0':
             exit_program()
         else:
