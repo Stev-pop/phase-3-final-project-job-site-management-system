@@ -99,13 +99,14 @@ class Job:
         sql = "SELECT * FROM jobs WHERE employer_id = ?"
         rows = CURSOR.execute(sql, (employer_id,)).fetchall()
         return [cls.instance_from_db(row) for row in rows]
-    
+
     @classmethod
     def find_employee_job_info(cls, job_id):
         sql = """
             SELECT employees.name, jobs.title, jobs.description
             FROM employees
-            JOIN jobs ON employees.employer_id = jobs.employer_id
+            JOIN employee_jobs ON employees.employee_id = employee_jobs.employee_id
+            JOIN jobs ON employee_jobs.job_id = jobs.job_id
             WHERE jobs.job_id = ?
         """
         rows = CURSOR.execute(sql, (job_id,)).fetchall()

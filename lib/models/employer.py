@@ -5,37 +5,12 @@ class Employer:
     all = {}
 
     def __init__(self, name, company_name, employer_id=None):
-        """Initialize an Employer instance with a name, company name, and optionally an employer ID."""
         self.employer_id = employer_id
-        self._name = None
-        self._company_name = None
         self.name = name
         self.company_name = company_name
 
     def __repr__(self):
         return f"<Employer {self.employer_id}: {self.name}, Company: {self.company_name}>"
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, name):
-        if isinstance(name, str) and len(name) > 0:
-            self._name = name
-        else:
-            raise ValueError("Name must be a non-empty string")
-
-    @property
-    def company_name(self):
-        return self._company_name
-
-    @company_name.setter
-    def company_name(self, company_name):
-        if isinstance(company_name, str) and len(company_name) > 0:
-            self._company_name = company_name
-        else:
-            raise ValueError("Company name must be a non-empty string")
 
     @classmethod
     def create_table(cls):
@@ -106,23 +81,17 @@ class Employer:
 
     @classmethod
     def get_all(cls):
-        """Retrieve all employers from the database."""
-
         sql = "SELECT * FROM employers"
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
 
     @classmethod
     def find_by_id(cls, employer_id):
-        """Find an employer by ID."""
-
         sql = "SELECT * FROM employers WHERE employer_id = ?"
         row = CURSOR.execute(sql, (employer_id,)).fetchone()
         return cls.instance_from_db(row) if row else None
 
     def get_job_count(self):
-        """Get the number of jobs associated with this employer."""
-
         sql = """
             SELECT COUNT(*)
             FROM jobs
@@ -132,8 +101,6 @@ class Employer:
         return result[0] if result else 0
 
     def get_jobs(self):
-        """Get all jobs associated with this employer."""
-
         sql = """
             SELECT *
             FROM jobs
@@ -143,23 +110,18 @@ class Employer:
         return [Job.instance_from_db(row) for row in rows]
 
     def create_job(self, title, description):
-        """Create a new job associated with this employer."""
-
         job = Job(title, description, self.employer_id)
         job.save()
         return job
 
     @classmethod
     def find_jobs_by_id(cls, job_id):
-        """Find a job by its ID."""
         sql = "SELECT * FROM jobs WHERE job_id = ?"
         row = CURSOR.execute(sql, (job_id,)).fetchone()
         return Job.instance_from_db(row) if row else None
-    
+
     @classmethod
     def find_jobs_with_employer_name(cls):
-        """Find all jobs with the associated employer name."""
-        
         sql = """
             SELECT jobs.job_id, jobs.title, jobs.description, employers.name as employer_name
             FROM jobs
@@ -168,11 +130,8 @@ class Employer:
         rows = CURSOR.execute(sql).fetchall()
         return [(row[0], row[1], row[2], row[3]) for row in rows]
 
-   
     @classmethod
     def find_jobs_with_employer_names(cls, employer_id):
-        """Find all jobs with the associated employer name."""
-        
         sql = """
             SELECT jobs.job_id, jobs.title, jobs.description, employers.name as employer_name
             FROM jobs

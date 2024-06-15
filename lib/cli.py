@@ -1,5 +1,6 @@
-from models.employer import Employer
+from models.employee import Employee
 from models.job import Job
+from models.employee_job import Employee_Job
 
 from helpers import (
     exit_program,
@@ -9,17 +10,16 @@ from helpers import (
     update_job,
     delete_job,
     list_jobs_by_employer,
-    list_employers,
-    find_employer_by_id,
-    create_employer,
-    update_employer,
-    delete_employer,
-    find_jobs_with_employer_names_input
+    list_employees_for_job,
+    list_jobs_for_employee,
+    assign_employee_to_job,
+    unassign_employee_from_job
 )
 
 def main():
-    Employer.create_table()
+    Employee.create_table()
     Job.create_table()
+    Employee_Job.create_table()
 
     while True:
         print("\nJob Site Management System")
@@ -29,12 +29,10 @@ def main():
         print("4. Update Job Post")
         print("5. Delete Job")
         print("6. List Jobs by Employer")
-        print("7. List Employers")
-        print("8. Find Employer by ID")
-        print("9. Create Employer")
-        print("10. Update Employer")
-        print("11. Delete Employer")
-        print("12. Find Jobs with Employer Names")
+        print("7. List Employees for Job")
+        print("8. List Jobs for Employee")
+        print("9. Assign Employee to Job")
+        print("10. Unassign Employee from Job")
         print("0. Exit")
 
         choice = input("Enter your choice: ")
@@ -52,17 +50,13 @@ def main():
         elif choice == '6':
             list_jobs_by_employer()
         elif choice == '7':
-            list_employers()
+            list_employees_for_job()
         elif choice == '8':
-            find_employer_by_id()
+            list_jobs_for_employee()
         elif choice == '9':
-            create_employer()
+            assign_employee_to_job()
         elif choice == '10':
-            update_employer()
-        elif choice == '11':
-            delete_employer()
-        elif choice == '12':
-            find_jobs_with_employer_names_input()
+            unassign_employee_from_job()
         elif choice == '0':
             exit_program()
         else:

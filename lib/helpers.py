@@ -1,9 +1,6 @@
 from models.job import Job
-from models.employer import Employer
-
-def exit_program():
-    print("Goodbye!")
-    exit()
+from models.employee import Employee
+from models.employee_job import Employee_Job
 
 def list_jobs():
     jobs = Job.get_all()
@@ -54,61 +51,26 @@ def list_jobs_by_employer():
     for job in jobs:
         print(job)
 
-def list_employers():
-    employers = Employer.get_all()
-    for employer in employers:
-        print(employer)
+def list_employees_for_job():
+    job_id = input("Enter the job's ID to list employees: ")
+    employees = Employee_Job.get_employees_for_job(job_id)
+    for employee_id, name in employees:
+        print(f"Employee ID: {employee_id}, Name: {name}")
 
-def find_employer_by_id():
-    """Find an employer by his/her ID."""
-    
-    employer_id = input("Enter the employer's ID: ")
-    employer = Employer.find_by_id(employer_id)
-    print(employer) if employer else print(f'Employer {employer_id} not found')
+def list_jobs_for_employee():
+    employee_id = input("Enter the employee's ID to list jobs: ")
+    jobs = Employee_Job.get_jobs_for_employee(employee_id)
+    for job_id, title, description, employer_name in jobs:
+        print(f"Job ID: {job_id}, Title: {title}, Description: {description}, Employer: {employer_name}")
 
-def create_employer():
-    """Create a new employer."""
+def assign_employee_to_job():
+    employee_id = input("Enter the employee's ID: ")
+    job_id = input("Enter the job's ID: ")
+    Employee_Job.save(employee_id, job_id)
+    print(f'Employee {employee_id} assigned to job {job_id}')
 
-    name = input("Enter the employer's name: ")
-    company_name = input("Enter the employer's company name: ")
-    employer = Employer(name, company_name)
-    employer.save()
-    print(f'Employer {employer.employer_id} created successfully')
-
-def update_employer():
-    """Update an employer."""
-
-    employer_id = input("Enter the employer's ID to update: ")
-    employer = Employer.find_by_id(employer_id)
-    if employer:
-        name = input("Enter the new name (leave empty to keep current): ")
-        company_name = input("Enter the new company name (leave empty to keep current): ")
-        if name:
-            employer.name = name
-        if company_name:
-            employer.company_name = company_name
-        employer.update_employer()
-        print(f'Employer {employer_id} updated successfully')
-    else:
-        print(f'Employer {employer_id} not found')
-
-def delete_employer():
-    """Delete an employer."""
-
-    employer_id = input("Enter the employer's ID to delete: ")
-    employer = Employer.find_by_id(employer_id)
-    if employer:
-        employer.delete()
-        print(f'Employer {employer_id} deleted successfully')
-    else:
-        print(f'Employer {employer_id} not found')
-
-
-def find_jobs_with_employer_names_input():
-    """Find all jobs with the associated employer name based on user input."""
-    
-    employer_id = input("Enter the employer's ID to find associated jobs: ")
-    jobs = Employer.find_jobs_with_employer_names(employer_id)
-    for job in jobs:
-        print(job)
-        
+def unassign_employee_from_job():
+    employee_id = input("Enter the employee's ID: ")
+    job_id = input("Enter the job's ID: ")
+    Employee_Job.delete(employee_id, job_id)
+    print(f'Employee {employee_id} unassigned from job {job_id}')
